@@ -1,0 +1,8 @@
+#* @vtlvariable name="om" type="org.nrg.xdat.om.XnatImagesessiondata" *#
+<!-- BEGIN /templates/screens/xnat_imageSessionData/actionsBox/ViewInVolView.vm -->
+<!-- allowGuest: false -->
+<!-- Sequence: 7 -->
+<script src="$content.getURI('/scripts/xnat/plugin/volview/viewerAction.js')" type="text/javascript"></script>
+<li class="yuimenuitem">
+    <a id="volviewViewer" href="#" data-context="session"><div class="ic">&nbsp;</div><div class="ic_spacer">&nbsp;</div>Open In VolView</a>
+</li>

@@ -1,0 +1,19 @@
+# Build artifacts
+/build
+/.gradle
+/.gradle-home
+/gitdir/
+.git
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# VolView distribution (copied in during build)
+src/main/resources/META-INF/resources/volview/app/*
+!src/main/resources/META-INF/resources/volview/app/.gitkeep

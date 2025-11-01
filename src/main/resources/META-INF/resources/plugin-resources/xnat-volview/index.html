@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XNAT VolView</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --panel-width: 340px;
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #1f1f23;
+            color: #f4f4f4;
+        }
+
+        header {
+            padding: 12px 18px;
+            background: #272730;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        header p {
+            margin: 4px 0 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #control-panel {
+            width: var(--panel-width);
+            max-width: 100%;
+            padding: 16px;
+            box-sizing: border-box;
+            background: #21212a;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+        }
+
+        #viewer-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        select, button {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: #2a2a34;
+            color: inherit;
+            font-size: 14px;
+        }
+
+        select:disabled, button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        button.primary {
+            margin-top: 14px;
+            background: #4b6ef5;
+            border-color: #4b6ef5;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            margin-top: 8px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        button.secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        #status {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #ffb347;
+            min-height: 32px;
+        }
+
+        #viewer-frame {
+            flex: 1;
+            border: none;
+            background: #000;
+        }
+
+        .meta {
+            margin: 14px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .meta span {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .hint {
+            margin-top: 18px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        @media (max-width: 1024px) {
+            :root {
+                --panel-width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>VolView for XNAT Project <span id="project-name"></span></h1>
+    <p>Connects the Kitware VolView viewer to the XNAT DICOMweb proxy.</p>
+</header>
+<main>
+    <section id="control-panel">
+        <div class="meta">
+            <span><strong>DICOMweb</strong></span>
+            <span id="dicomweb-root">Loading…</span>
+        </div>
+        <label for="study-select">Study</label>
+        <select id="study-select" disabled>
+            <option value="">Loading studies…</option>
+        </select>
+        <label for="series-select">Series</label>
+        <select id="series-select" disabled>
+            <option value="">Select a study first</option>
+        </select>
+        <button id="open-study" class="primary" disabled>Open Study in VolView</button>
+        <button id="open-series" class="secondary" disabled>Open Series Only</button>
+        <div id="status"></div>
+        <div class="hint">
+            <p>VolView assets are served from <code id="viewer-entry-point">–</code>.</p>
+            <p>If the viewer frame stays blank, verify that the VolView build has been copied into the plugin resources or configure <code>volview.viewer.entry-point</code> in site configuration.</p>
+        </div>
+    </section>
+    <section id="viewer-panel">
+        <iframe id="viewer-frame" title="VolView Viewer" allow="fullscreen; xr-spatial-tracking"></iframe>
+    </section>
+</main>
+<script type="module">
+    const pathname = window.location.pathname;
+    const apiMarker = '/xapi/volview/app/';
+    const newMarker = '/volview/app/';
+    const legacyMarker = '/app/volview/';
+    let contextPath = '';
+    if (pathname.includes(apiMarker)) {
+        contextPath = pathname.substring(0, pathname.indexOf(apiMarker));
+    } else if (pathname.includes(newMarker)) {
+        contextPath = pathname.substring(0, pathname.indexOf(newMarker));
+    } else if (pathname.includes(legacyMarker)) {
+        contextPath = pathname.substring(0, pathname.indexOf(legacyMarker));
+    }
+    const moduleUrl = `${contextPath}/plugin-resources/xnat-volview/app.js`;
+    import(moduleUrl);
+</script>
+</body>
+</html>

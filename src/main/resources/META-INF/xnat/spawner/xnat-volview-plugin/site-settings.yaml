@@ -1,0 +1,54 @@
+siteSettings:
+  kind: tabs
+  groups:
+    volviewTabs: VolView
+  contents:
+    ${volviewTab}
+
+volviewTab:
+  kind: tab
+  group: volviewTabs
+  label: VolView Settings
+  contents:
+    ${volviewConfig}
+
+volviewConfig:
+  kind: panel.form
+  name: volviewSettingsForm
+  label: VolView Configuration
+  method: POST
+  url: /xapi/siteConfig
+  contentType: json
+  contents:
+    volviewEntryPoint:
+      kind: panel.input.text
+      name: volview.viewer.entry-point
+      label: VolView Entry Point
+      placeholder: /volview/app/index.html
+      size: 60
+      description: >
+        Relative or absolute URL to the VolView index.html file.
+    volviewDicomwebBase:
+      kind: panel.input.text
+      name: volview.dicomweb.base-path
+      label: DICOMweb Base Path
+      placeholder: /xapi/dicomweb/projects
+      size: 60
+      description: >
+        Root path for the DICOMweb proxy plugin that VolView queries.
+    volviewShellPath:
+      kind: panel.input.text
+      name: volview.shell.path
+      label: VolView Shell Path
+      placeholder: /plugin-resources/xnat-volview/index.html
+      size: 60
+      description: >
+        Location of the VolView shell page served within XNAT.
+    volviewServerName:
+      kind: panel.input.text
+      name: volview.server-name
+      label: Display Name
+      placeholder: XNAT DICOMweb
+      size: 40
+      description: >
+        Friendly name displayed in the VolView shell UI.

@@ -1,0 +1,113 @@
+buildscript {
+    ext {
+        vXnat = "1.9.0"
+    }
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        mavenLocal()
+        maven { url "https://nrgxnat.jfrog.io/nrgxnat/libs-release" }
+        maven { url "https://nrgxnat.jfrog.io/nrgxnat/libs-snapshot" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
+    }
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+def pluginVersion = '0.1.0'
+
+group 'org.nrg.xnat'
+version pluginVersion
+
+repositories {
+    maven { url "https://plugins.gradle.org/m2/" }
+    mavenLocal()
+    maven { url "https://nrgxnat.jfrog.io/nrgxnat/libs-release" }
+    maven { url "https://nrgxnat.jfrog.io/nrgxnat/libs-snapshot" }
+    mavenCentral()
+    maven { url "https://www.dcm4che.org/maven2/" }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileJava {
+    options.fork = false
+}
+
+configurations {
+    all*.exclude group: 'edu.ucar', module: 'netcdf'
+    all*.exclude group: 'jakarta-regexp'
+    all*.exclude group: 'net.sf.saxon', module: 'Saxon-B'
+    all*.exclude group: 'org.apache.geronimo.specs'
+    all*.exclude group: 'javax.sql', module: 'jdbc-stdext'
+    all*.exclude group: 'javax.transaction', module: 'jta'
+    all*.exclude group: 'javax.servlet', module: 'servlet-api'
+}
+
+dependencyManagement.imports {
+    mavenBom "org.nrg:parent:${vXnat}"
+}
+
+dependencies {
+    compileOnly "org.slf4j:slf4j-api"
+    compileOnly "log4j:log4j"
+    compileOnly 'javax.servlet:javax.servlet-api'
+    compileOnly 'com.google.guava:guava:20.0'
+    compileOnly 'commons-lang:commons-lang:2.6'
+    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.13.4'
+    compileOnly 'com.fasterxml.jackson.core:jackson-annotations:2.13.4'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+    compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+    compileOnly 'javax.inject:javax.inject:1'
+    compileOnly "org.nrg.xnat:web:${vXnat}"
+    compileOnly "org.nrg.xnat:xnat-data-models:${vXnat}"
+    compileOnly "org.nrg.xdat:core:${vXnat}"
+    compileOnly("org.nrg:framework:${vXnat}")
+    compileOnly "org.nrg:config:${vXnat}"
+    compileOnly "org.springframework:spring-beans"
+    compileOnly "org.springframework:spring-context"
+    compileOnly "org.springframework:spring-web"
+    compileOnly "org.springframework:spring-webmvc"
+    compileOnly "io.springfox:springfox-swagger2"
+    compileOnly "io.springfox:springfox-swagger-ui"
+
+    // Additional dependencies from dicomweb
+    compileOnly 'commons-io:commons-io:2.11.0'
+    compileOnly 'org.apache.commons:commons-compress:1.21'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation "org.springframework:spring-test"
+    testImplementation "org.mockito:mockito-core:4.8.0"
+    testImplementation "javax.servlet:javax.servlet-api"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': 'XNAT VolView Plugin',
+                'Implementation-Version': version,
+                'XNAT-Plugin-Id': 'xnat-volview-plugin',
+                'XNAT-Plugin-Name': 'XNAT VolView Plugin',
+                'XNAT-Plugin-Description': 'Embeds Kitware VolView backed by the XNAT DICOMweb proxy.'
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+}
