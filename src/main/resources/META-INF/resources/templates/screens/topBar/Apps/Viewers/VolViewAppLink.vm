@@ -1,0 +1,10 @@
+<!-- BEGIN xnat-volview-plugin templates/screens/topBar/Apps/VolViewAppLink.vm -->
+
+<!-- allowGuest: false -->
+<li class="volview-app-link">
+    <a href="/volview/app/" data-qa="apps-volview-link">
+        VolView
+    </a>
+</li>
+
+<!-- END xnat-volview-plugin templates/screens/topBar/Apps/VolViewAppLink.vm -->
